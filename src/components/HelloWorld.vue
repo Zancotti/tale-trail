@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useCounter } from "../stores/useCounter";
+import { useLocationStore } from "../stores/useLocationStore";
 
 defineProps({
   msg: { type: String, required: true },
@@ -7,10 +8,13 @@ defineProps({
 const emit = defineEmits(["onCounterClick"]);
 
 const { count, increaseCount, internalCount } = useCounter();
+const locationStore = useLocationStore();
 </script>
 
 <template>
   <h1>{{ msg }}</h1>
+  <h2>Could fetch location: {{ locationStore.isLocationFetched }}</h2>
+  <div>Your latitude is {{ locationStore.latitude }}, your longitude is {{ locationStore.longitude }}</div>
 
   <div class="card">
     <button type="button" @click="increaseCount">count is {{ count }} internal count is {{ internalCount }}</button>
