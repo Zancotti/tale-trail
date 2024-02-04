@@ -21,6 +21,7 @@ export interface MapMarker {
 
 export interface MarkerProps {
   marker: MapMarker;
+  isEditMode: boolean;
 }
 
 const props = defineProps<MarkerProps>();
@@ -34,7 +35,7 @@ const options = computed(() => {
     position: { lat: lat.value, lng: lng.value },
     label: props.marker.title.label,
     title: props.marker.title.title,
-    draggable: true,
+    draggable: props.isEditMode,
   };
 });
 

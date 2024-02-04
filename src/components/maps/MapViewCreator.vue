@@ -5,6 +5,7 @@ import { GoogleMap } from "vue3-google-map";
 import Marker, { MapMarker } from "./Marker.vue";
 import MarkerCard from "./MarkerCard.vue";
 import { v4 as uuidv4 } from "uuid";
+import { useStorage } from "@vueuse/core";
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const locationStore = useLocationStore();
@@ -13,7 +14,19 @@ const startingPosition = computed(() => {
   return { lat: locationStore.latitude, lng: locationStore.longitude };
 });
 
-const markers = ref<MapMarker[]>([]);
+const markers = useStorage<MapMarker[]>("AdventureMap", []);
+
+// TODO: Save to backend in the future
+// watch(
+//   markers,
+//   (newValue) => {
+//     // Serialize state object to a JSON string
+//     const serializedState = JSON.stringify(newValue);
+//     // Save serialized state to localStorage
+//     localStorage.setItem("AdventureMap", serializedState);
+//   },
+//   { deep: true }
+// );
 
 let iteration = ref(1);
 
@@ -78,6 +91,7 @@ const onRemove = () => {
         v-for="marker in markers"
         :key="marker.id"
         :marker="marker"
+        :is-edit-mode="true"
         @on-move="(e) => onMove(e, marker)"
         @on-select="onSelect(marker)"
       />

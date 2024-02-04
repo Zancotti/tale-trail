@@ -14,6 +14,9 @@ import * as directives from "vuetify/directives";
 // Material design icons
 import "@mdi/font/css/materialdesignicons.css";
 
+// VueRouter
+import { createRouter, createWebHistory } from "vue-router";
+
 const pinia = createPinia();
 
 const vuetify = createVuetify({
@@ -24,4 +27,32 @@ const vuetify = createVuetify({
   directives,
 });
 
-createApp(App).use(pinia).use(vuetify).mount("#app");
+const routes = [
+  {
+    path: "/",
+    name: "home",
+    component: () => import("./components/maps/MapViewCreator.vue"),
+  },
+  {
+    path: "/creator",
+    name: "creator",
+    component: () => import("./components/maps/MapViewCreator.vue"),
+  },
+  {
+    path: "/adventure",
+    name: "adventure",
+    component: () => import("./components/maps/MapViewAdventure.vue"),
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: () => import("./components/maps/MapViewCreator.vue"),
+  },
+];
+
+const router = createRouter({
+  routes,
+  history: createWebHistory(),
+});
+
+createApp(App).use(pinia).use(vuetify).use(router).mount("#app");

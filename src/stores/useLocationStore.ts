@@ -14,7 +14,7 @@ export const useLocationStore = defineStore("useLocationStore", () => {
     try {
       isLoading.value = true;
       const position: GeolocationPosition = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
+        navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true });
       });
       latitude.value = position.coords.latitude;
       longitude.value = position.coords.longitude;
