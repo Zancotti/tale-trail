@@ -6,22 +6,24 @@ export const useLocationStore = defineStore("useLocationStore", () => {
   const longitude = ref<number>(0);
   const isLoading = ref(false);
 
-  onMounted(() => {
-    fetchLocation();
+  const accuracy = ref(0);
+
+  onMounted(async () => {
+    isLoading.value = true;
+    await fetchLocation();
+    isLoading.value = false;
   });
 
   const fetchLocation = async () => {
     try {
-      isLoading.value = true;
       const position: GeolocationPosition = await new Promise((resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true });
       });
       latitude.value = position.coords.latitude;
       longitude.value = position.coords.longitude;
+      accuracy.value = position.coords.accuracy;
     } catch (error) {
       console.error("Error fetching location:", error);
-    } finally {
-      isLoading.value = false;
     }
   };
 
@@ -33,5 +35,6 @@ export const useLocationStore = defineStore("useLocationStore", () => {
     isLoading,
     isLocationFetched,
     fetchLocation,
+    accuracy,
   };
 });

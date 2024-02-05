@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted } from "vue";
 import { useLocationStore } from "@/stores/useLocationStore";
 import { GoogleMap } from "vue3-google-map";
 import Marker, { MapMarker } from "./Marker.vue";
@@ -8,6 +8,8 @@ import { useStorage } from "@vueuse/core";
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const locationStore = useLocationStore();
+
+const accuracy = computed(() => locationStore.accuracy);
 
 const startingPosition = computed(() => {
   return { lat: locationStore.latitude, lng: locationStore.longitude };
@@ -20,6 +22,8 @@ let locationInterval: number | undefined;
 onMounted(() => {
   // Start fetching the user's location every 10 seconds
   locationInterval = setInterval(locationStore.fetchLocation, 10000);
+  userLocation.value.location.lat = locationStore.latitude;
+  userLocation.value.location.lng = locationStore.longitude;
 });
 
 onUnmounted(() => {
@@ -29,17 +33,19 @@ onUnmounted(() => {
   }
 });
 
-const userLocation = ref({
-  id: uuidv4(),
-  title: {
-    title: "Your Location",
-    label: ` `,
-  },
-  location: {
-    lat: locationStore.latitude,
-    lng: locationStore.longitude,
-    locationType: null,
-  },
+const userLocation = computed(() => {
+  return {
+    id: uuidv4(),
+    title: {
+      title: "Your Location",
+      label: ` `,
+    },
+    location: {
+      lat: locationStore.latitude,
+      lng: locationStore.longitude,
+      locationType: null,
+    },
+  };
 });
 </script>
 
@@ -61,6 +67,7 @@ const userLocation = ref({
       <Marker v-for="marker in markers" :key="marker.id" :marker="marker" :is-edit-mode="false" />
       <Marker :key="userLocation.id" :marker="userLocation" :is-edit-mode="false" />
     </GoogleMap>
+    {{ accuracy }}
   </div>
 </template>
 
